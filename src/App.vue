@@ -10,7 +10,7 @@ export default {
   components: {
     VHeader
   }
-};
+}
 </script>
 <style lang="stylus">
 #app
