@@ -50,8 +50,7 @@ export default {
        slideOptions: {
          listenScroll: true,
          probeType: 3,
-         click: false,
-         /* lock y-direction when scrolling horizontally and  vertically at the same time */
+         // click: false,
          directionLockThreshold: 0
        }
      }

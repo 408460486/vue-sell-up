@@ -60,7 +60,7 @@
       return {
         scrollOptions: {
           observeDOM: true,
-          click: false,
+          // click: false,
           probeType: 1,
           scrollbar: false,
           pullDownRefresh: false,
@@ -87,6 +87,9 @@
       },
       add(target) {
         this.$emit(EVENT_ADD, target)
+      },
+      getHeight() {
+        return document.getElementsByClassName('scroll-list-wrapper')[0].clientHeight
       },
       clear() {
         this.$createDialog({

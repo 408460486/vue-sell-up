@@ -10,8 +10,8 @@
         <span class="pay" :class="payClass">{{payDesc}}</span>
       </div>
     </div>
-    <div class="circle0"></div>
-    <div class="circle1" :class="{'highlight':totalPrice>0}">
+    <div class="circle0" @click.stop="toogleList"></div>
+    <div class="circle1" :class="{'highlight':totalPrice>0}" @click.stop="toogleList">
       <i class="icon-shopping_cart"></i>
       <bubble class="bubble" :num="foodsNum" v-show="foodsNum>0"></bubble>
     </div>
@@ -106,9 +106,9 @@
         ball.style.transform = ball.style.webkitTransform = `translate(0,${y}px)`
         inner.style.transform = inner.style.webkitTransform = `translate(-${x}px,0)`
         // ball.style.opacity = 0
-
+        let vm = this
         ball.addEventListener('transitionend', () => {
-          if (this.$si.options.debug) {
+          if (vm.$si.options.debug) {
             console.log('transitionend')
           }
           ball.removeChild(inner)
@@ -118,6 +118,7 @@
       toogleList() {
         if (this.foodsNum > 0) {
           this.$emit(EVENT_TOOGLE_LIST)
+          this.$bus.$emit(this.$event.FOODS_NUM, this.foodsNum)
         }
       },
       pay(e) {
@@ -176,8 +177,8 @@
         background-color $color-blue
     .bubble
       position absolute
-      top -8px
-      right -8px
+      top -5px
+      right -3px
     .shop-car-wrapper
       margin-top 10px
       // width 100%

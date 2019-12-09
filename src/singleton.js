@@ -42,7 +42,9 @@ exports.install = function(Vue, options) {
     HEADER_DETAILS_SHOW: 'HEADER_DETAILS_SHOW',
     HEADER_MASK_VISIBLE: 'HEADER_MASK_VISIBLE',
     HEADER_MASK_HIDE: 'HEADER_MASK_HIDE',
-    FOOD_VISIBLE: 'FOOD_VISIBLE'
+    FOOD_VISIBLE: 'FOOD_VISIBLE',
+    FOOD_DROP: 'FOOD_DROP',
+    FOODS_NUM: 'FOODS_NUM'
   }
   Vue.prototype.$si = {
     options: options

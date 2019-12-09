@@ -1,16 +1,10 @@
 <template>
   <div>
-    <div class="header-wrapper">
-      <v-header :seller="seller"></v-header>
-    </div>
-    <div class="tab-wrapper">
-      <tab :tabs="getTabs()" :initialIndex="0"></tab>
-    </div>
+    <div class="header-wrapper"><v-header :seller="seller"></v-header></div>
+    <div class="tab-wrapper"><tab :tabs="getTabs()" :initialIndex="0"></tab></div>
     <header-details :seller="seller"></header-details>
-    <transition name="fade">
-      <div class="header-mask" v-show="headerMaskVisivle" @click="headerMaskClick"></div>
-    </transition>
-    <food ref="food"></food>
+    <transition name="fade"><div class="header-mask" v-show="headerMaskVisivle" @click="headerMaskClick"></div></transition>
+    <food ref="foodComp" :food="selectedFood"></food>
     <!-- <div class="tab">
       <div class="tab-item border-1px"><router-link to="/goods">商品</router-link></div>
       <div class="tab-item border-1px"><router-link to="/ratings">评价</router-link></div>
@@ -37,7 +31,8 @@ export default {
       seller: { id: 42010620191008 },
       goods: {},
       ratings: {},
-      headerMaskVisivle: false
+      headerMaskVisivle: false,
+      selectedFood: {}
     }
   },
   components: {
@@ -64,9 +59,11 @@ export default {
     _headerMaskVisible(flag) {
       this.headerMaskVisivle = flag
     },
-    _showFood(flag) {
-      if (flag) {
-        this.$refs.food.show()
+    _showFood(val) {
+      if (val) {
+        // this.$set(this, 'selectedFood', val)
+        this.selectedFood = val
+        this.$refs.foodComp.show()
       }
     },
     getTabs() {
@@ -102,28 +99,28 @@ export default {
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">
-  @import 'common/stylus/mixin.styl'
+@import 'common/stylus/mixin.styl'
 
-  .header-wrapper
-    position fixed
-    top 0
-    left 0
-    right 0
-  .tab-wrapper
-    position fixed
-    top 133px
-    left 0
-    right 0
-    bottom 0
-  .header-mask
-    position fixed
-    left 0
-    right 0
-    height 169px
-    background #25262d
-    opacity 0.4
-    &.fade-enter, &.fade-leave-to
-      opacity: 0
-    &.fade-enter-active, &.fade-leave-active
-      transition all .3s ease-in-out
+.header-wrapper
+  position fixed
+  top 0
+  left 0
+  right 0
+.tab-wrapper
+  position fixed
+  top 133px
+  left 0
+  right 0
+  bottom 0
+.header-mask
+  position fixed
+  left 0
+  right 0
+  height 169px
+  background #25262d
+  opacity 0.4
+  &.fade-enter, &.fade-leave-to
+    opacity 0
+  &.fade-enter-active, &.fade-leave-active
+    transition all 0.3s ease-in-out
 </style>
