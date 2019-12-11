@@ -25,34 +25,64 @@
             <div class="info">{{ food.info }}</div>
           </div>
           <split></split>
-          <div class="content"><h1 class="title2">商品评价</h1></div>
+          <div class="content">
+            <h1 class="title2">商品评价</h1>
+            <rating-select @select="_select" @toogle="_toogle" :ratings="ratings" :desc="desc" :selectType="selectType" :onlyContent="onlyContent"></rating-select>
+          </div>
+          <div class="hline"></div>
+          <div class="content">
+            <div class="ratings-wrapper">
+              <ul v-show="computedRatings && computedRatings.length">
+                <li v-for="(rating, index) in computedRatings" :key="index" class="rating-item border-bottom-1px">
+                  <div class="user">
+                    <span class="name">{{ rating.username }}</span>
+                    <img class="avatar" width="12" height="12" :src="rating.avatar" />
+                  </div>
+                  <div class="time">{{ _format(rating.rateTime) }}</div>
+                  <p class="text">
+                    <span :class="{ 'icon-thumb_up': rating.rateType === 0, 'icon-thumb_down': rating.rateType === 1 }"></span>
+                    {{ rating.text }}
+                  </p>
+                </li>
+              </ul>
+              <div class="no-rating" v-show="!computedRatings || !computedRatings.length">暂无评价</div>
+            </div>
+          </div>
         </div>
         <div class="ball-container">
           <!-- <div class="ball">
             <div class="inner"></div>
           </div> -->
         </div>
-        <transition name="fade">
-          <div class="content-mask" v-show="contentMaskVisivle"></div>
-        </transition>
+        <transition name="fade"><div class="content-mask" v-show="contentMaskVisivle"></div></transition>
       </cube-scroll>
     </div>
   </transition>
 </template>
 
 <script>
+import moment from 'moment'
 import popupMixin from '../../common/mixins/popup.js'
 import Split from '../split/split.vue'
 import CarControl from '../car-control/car-control.vue'
+import RatingSelect from '../rating-select/rating-select.vue'
 
 const EVENT_SHOW = 'show'
+const ALL = 2
 
 export default {
   name: 'food',
   mixins: [popupMixin],
   data() {
     return {
-      contentMaskVisivle: false
+      contentMaskVisivle: false,
+      selectType: ALL,
+      onlyContent: false,
+      desc: {
+        all: '全部',
+        positive: '推荐',
+        negative: '吐槽'
+      }
     }
   },
   props: {
@@ -68,11 +98,32 @@ export default {
     })
 
     this.$bus.$on(this.$event.FOODS_NUM, this._onFoodsNum)
+    // this.$bus.$on(this.$event.FOODS_NUM_CLOSE, this._onFoodsNumClose)
   },
   beforeDestroy() {
     this.$bus.$off(this.$event.FOODS_NUM, this._onFoodsNum)
+    // this.$bus.$off(this.$event.FOODS_NUM_CLOSE, this._onFoodsNumClose)
   },
   mounted() {},
+  computed: {
+    ratings() {
+      return this.food.ratings
+    },
+    computedRatings() {
+      let ret = []
+      if (this.ratings) {
+        this.ratings.forEach(rating => {
+          if (this.onlyContent && !rating.text) {
+            return
+          }
+          if (rating.rateType === this.selectType || this.selectType === ALL) {
+            ret.push(rating)
+          }
+        })
+      }
+      return ret
+    }
+  },
   methods: {
     hideFood() {
       this.hide()
@@ -120,15 +171,31 @@ export default {
       if (this.contentMaskVisivle) {
         _elfood.style.bottom = '57px'
       } else {
-         const _h = 88 + 48 * (n - 1)
-          _elfood.style.bottom = _h + 20 + 'px'
+        const _h = 88 + 48 * (n - 1)
+        _elfood.style.bottom = _h + 45 + 'px'
       }
       this.contentMaskVisivle = !this.contentMaskVisivle
+    },
+    // _onFoodsNumClose() {
+    //   this.contentMaskVisivle = false
+    // },
+    // _contentMaskClick() {
+    //   this.$bus.$emit(this.$event.FOODS_NUM_CLOSE_TO_GOOD)
+    // },
+    _select(type) {
+      this.selectType = type
+    },
+    _toogle() {
+      this.onlyContent = !this.onlyContent
+    },
+    _format(time) {
+      return moment(time).format('YYYY-MM-DD HH:MM')
     }
   },
   components: {
     Split,
-    CarControl
+    CarControl,
+    RatingSelect
   }
 }
 </script>
@@ -136,8 +203,9 @@ export default {
 <style lang="stylus" rel="stylesheet/stylus" scoped>
 @import '../../../src/common/stylus/variable.styl'
 
+// @import '../../../src/common/stylus/mixin.styl'
 .food
-  transition: all .3s ease-in-out
+  transition all 0.3s ease-in-out
   position fixed
   left 0
   bottom 57px
@@ -209,6 +277,46 @@ export default {
       padding 8px 8px 6px 8px
       font-size $fontsize-small-s
       color $color-grey
+    .ratings-wrapper
+      .rating-item
+        padding 16px 0
+        border-bottom 1px solid $color-row-line
+        &:last-child
+          border-bottom none
+        .user
+          position absolute
+          right 0
+          top 16px
+          display flex
+          align-items center
+          line-height 12px
+          .name
+            margin-right 6px
+            font-size $fontsize-small
+            color $color-light-grey
+          .avatar
+            border-radius 50%
+        .time
+          margin-bottom 6px
+          line-height 12px
+          font-size $fontsize-small
+          color $color-light-grey
+        .text
+          line-height 16px
+          font-size $fontsize-medium
+          color $color-dark-grey
+          .icon-thumb_up, .icon-thumb_down
+            margin-right 4px
+            line-height 16px
+            font-size $fontsize-medium
+          .icon-thumb_up
+            color $color-blue
+          .icon-thumb_down
+            color $color-light-grey
+      .no-rating
+        padding 16px 0
+        font-size $fontsize-medium
+        color $color-light-grey
   .ball-container
     pointer-events none
     .ball
@@ -232,4 +340,9 @@ export default {
       opacity 0
     &.fade-enter-active, &.fade-leave-active
       transition all 0.3s ease-in-out
+  .hline
+    width 100%
+    height 2px
+    background-color $color-row-line
+    margin-top -16px
 </style>

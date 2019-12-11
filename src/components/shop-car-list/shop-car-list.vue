@@ -84,6 +84,7 @@
     methods: {
       maskClick() {
         this.$emit(EVENT_MASK_CLICK)
+        // this.$bus.$emit(this.$event.FOODS_NUM_CLOSE)
       },
       add(target) {
         this.$emit(EVENT_ADD, target)

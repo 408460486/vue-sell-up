@@ -89,11 +89,13 @@ export default {
     })
     this.$bus.$on(this.$event.FOOD_VISIBLE, this._showFoodMask)
     this.$bus.$on(this.$event.FOOD_DROP, this.drop)
+    // this.$bus.$on(this.$event.FOODS_NUM_CLOSE_TO_GOOD, this._foodsNumCloseToGood)
   },
   destroyed() {
     this.$bus.$off(this.$event.HEADER_MASK_HIDE)
     this.$bus.$off(this.$event.FOOD_VISIBLE, this._showFoodMask)
     this.$bus.$off(this.$event.FOOD_DROP, this.drop)
+    // this.$bus.$off(this.$event.FOODS_NUM_CLOSE_TO_GOOD, this._foodsNumCloseToGood)
   },
   mounted() {},
   computed: {
@@ -172,6 +174,9 @@ export default {
     _showFoodMask(flag) {
       this.foodMaskVisible = flag
     },
+    // _foodsNumCloseToGood() {
+    //    this._hide()
+    // },
     changeHandler(label) {
       // console.log('changed to:', label)
     },

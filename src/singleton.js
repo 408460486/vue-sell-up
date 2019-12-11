@@ -45,6 +45,8 @@ exports.install = function(Vue, options) {
     FOOD_VISIBLE: 'FOOD_VISIBLE',
     FOOD_DROP: 'FOOD_DROP',
     FOODS_NUM: 'FOODS_NUM'
+    // FOODS_NUM_CLOSE: 'FOODS_NUM_CLOSE',
+    // FOODS_NUM_CLOSE_TO_GOOD: 'FOODS_NUM_CLOSE_TO_GOOD'
   }
   Vue.prototype.$si = {
     options: options
