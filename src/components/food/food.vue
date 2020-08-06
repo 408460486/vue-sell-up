@@ -27,7 +27,7 @@
           <split></split>
           <div class="content">
             <h1 class="title2">商品评价</h1>
-            <rating-select @select="_select" @toogle="_toogle" :ratings="ratings" :desc="desc" :selectType="selectType" :onlyContent="onlyContent"></rating-select>
+            <rating-select @select="onSelect" @toogle="onToogle" :ratings="ratings" :desc="desc" :selectType="selectType" :onlyContent="onlyContent"></rating-select>
           </div>
           <div class="hline"></div>
           <div class="content">
@@ -54,7 +54,7 @@
             <div class="inner"></div>
           </div> -->
         </div>
-        <transition name="fade"><div class="content-mask" v-show="contentMaskVisivle"></div></transition>
+        <transition name="fade"><div class="content-mask" v-show="contentMaskVisivle" @click="_contentMaskClick"></div></transition>
       </cube-scroll>
     </div>
   </transition>
@@ -63,21 +63,19 @@
 <script>
 import moment from 'moment'
 import popupMixin from '../../common/mixins/popup.js'
+import ratingsMixin from '../../common/mixins/ratings.js'
 import Split from '../split/split.vue'
 import CarControl from '../car-control/car-control.vue'
 import RatingSelect from '../rating-select/rating-select.vue'
 
 const EVENT_SHOW = 'show'
-const ALL = 2
 
 export default {
   name: 'food',
-  mixins: [popupMixin],
+  mixins: [ratingsMixin, popupMixin],
   data() {
     return {
       contentMaskVisivle: false,
-      selectType: ALL,
-      onlyContent: false,
       desc: {
         all: '全部',
         positive: '推荐',
@@ -98,30 +96,16 @@ export default {
     })
 
     this.$bus.$on(this.$event.FOODS_NUM, this._onFoodsNum)
-    // this.$bus.$on(this.$event.FOODS_NUM_CLOSE, this._onFoodsNumClose)
+    this.$bus.$on(this.$event.FOODS_NUM_CLOSE, this._onFoodsNumClose)
   },
   beforeDestroy() {
     this.$bus.$off(this.$event.FOODS_NUM, this._onFoodsNum)
-    // this.$bus.$off(this.$event.FOODS_NUM_CLOSE, this._onFoodsNumClose)
+    this.$bus.$off(this.$event.FOODS_NUM_CLOSE, this._onFoodsNumClose)
   },
   mounted() {},
   computed: {
     ratings() {
       return this.food.ratings
-    },
-    computedRatings() {
-      let ret = []
-      if (this.ratings) {
-        this.ratings.forEach(rating => {
-          if (this.onlyContent && !rating.text) {
-            return
-          }
-          if (rating.rateType === this.selectType || this.selectType === ALL) {
-            ret.push(rating)
-          }
-        })
-      }
-      return ret
     }
   },
   methods: {
@@ -176,17 +160,16 @@ export default {
       }
       this.contentMaskVisivle = !this.contentMaskVisivle
     },
-    // _onFoodsNumClose() {
-    //   this.contentMaskVisivle = false
-    // },
-    // _contentMaskClick() {
-    //   this.$bus.$emit(this.$event.FOODS_NUM_CLOSE_TO_GOOD)
-    // },
-    _select(type) {
-      this.selectType = type
+    _onFoodsNumClose() {
+      let _elfood = document.getElementsByClassName('food')[0]
+      _elfood.style.bottom = '57px'
+      this.contentMaskVisivle = false
     },
-    _toogle() {
-      this.onlyContent = !this.onlyContent
+    _contentMaskClick() {
+      let _elfood = document.getElementsByClassName('food')[0]
+      _elfood.style.bottom = '57px'
+      this.contentMaskVisivle = false
+      this.$bus.$emit(this.$event.FOODS_NUM_CLOSE_TO_GOOD)
     },
     _format(time) {
       return moment(time).format('YYYY-MM-DD HH:MM')
@@ -280,7 +263,7 @@ export default {
     .ratings-wrapper
       .rating-item
         padding 16px 0
-        border-bottom 1px solid $color-row-line
+        // border-bottom 1px solid $color-row-line
         &:last-child
           border-bottom none
         .user

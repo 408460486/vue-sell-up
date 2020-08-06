@@ -1,3 +1,4 @@
+const webpack = require('webpack')
 const appData = require('./data.json')
 const seller = appData.seller
 const goods = appData.goods
@@ -41,5 +42,11 @@ module.exports = {
           })
         })
     }
-  }
+  },
+  chainWebpack(config) {
+    config.plugin('context')
+      .use(webpack.ContextReplacementPlugin,
+        [/moment[/\\]locale$/, /zh-cn/])
+  },
+  baseUrl: ''
 }
